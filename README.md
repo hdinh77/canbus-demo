@@ -14,3 +14,11 @@
     sudo ip link set up vcan0
 ```
 - these commands set up a device called ```vcan0``` that can send and receive CAN frames
+- to be able to see this virtual canbus, use command ```ifconfig```
+
+## Writing a simulator
+- send out canbus signals that we can use in one package (array), here we're going to make a car
+- first, need to import the 'socketcan' module
+- create a channel, send out a message (object that has id, data)
+- data is sent out using 8 bytes here (8 items in an array)
+- to send in a constant loop, use ```setInterval()```
