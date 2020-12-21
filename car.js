@@ -7,12 +7,43 @@ var msg = {
     data: [0,0,0,0,0,0,0,0]
 }
 
+var speed = 0;
+var revs = 0;
+var up = true;
+
+setInterval(() => {
+    var out = {};
+    var buff = Buffer.alloc(8);
+    
+    
+    if(speed < 155) {
+        speed += 1;
+        revs += 240
+    } else {
+        if(up) {
+            revs += 100;
+            up = !up;
+        }else {
+            revs -= 100;
+            up = !up;
+        }
+    }
+
+    if(revs > 7000) {
+        revs = 1000;
+    }
+
+    buff.writeUIntBE(revs, 0, 4);
+    buff.writeUIntBE(speed, 4, 2);
+    console.log(buff);
 
 
+    out.id = msg.id;
+    out.data = buff;
 
+    channel.send(out);
 
-
-
+}, 100)
 
 
 
