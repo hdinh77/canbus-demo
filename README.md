@@ -3,8 +3,9 @@
 
 ## Dependencies
 - socketcan
-- electron
 - express
+- socket.io
+- electron
 
 ## Creating a virtual canbus
 - In order to create a virtual canbus, we need a SocketCAN driver where we can initialize a virtual CAN port driver:
@@ -32,3 +33,32 @@
 - buffer need to allocate how much space using, so ```Buffer.alloc(8)``` allocates 8 bytes (should be same as # entries in array)
 - to write to this buffer, we use unsigned integer set as big endian
 ```buff.writeUIntBE(value_want_to_write_in, start_byte, length_in_bytes);```
+
+## Setting up the server
+- get the server backend to talk to the canbus
+- use eventListener that automatically tells you when there is a message
+```channel.addListener("onMessage", function(msg) {});```
+- this runs the function with parameter msg when a message comes in
+- ```[...msg.data]``` this syntax means it is copying the buffer msg.data into an array
+- reading from a buffer is similar to writing ```msg.data.readUIntBE(start_byte, length_in_bytes);```
+- make all these attributes part of an object called "carInfo"
+- now require the express dependencies
+- since we are using socketcan too, need to create a server for the app (http is built in module)
+```var server = require('http').createServer(app);```
+- now we need to tell express where to find the html file that it will be serving up to the web
+```app.use(express.static(__dirname + "/html"));```, this sets the page as static, and in the current directory's html file
+- also using the canvas-gauges package
+- ```app.use``` "serves up a file for it to be able to use", in this case we can even import scripts!
+
+## Backend and frontend communication
+- create an index.js file that uses socket.io with web sockets to send info back and forth
+- when someone connects to the socket they create a client object that is passed into this function
+```io.on('connection', function(client){});```
+- client can't access files on the backend, so socket.io hosts all those js files need, use script tag from docs
+- when DOM content is loaded (HTML), will call a function to console.log the 'test' data send from backend
+- after, can pass in the CAN message through the socket
+- to see how to mutate gauges based on CAN message, refer to: https://canvas-gauges.com/documentation/user-guide/using-as-component
+
+## Send message back from frontend to backend
+- in this one it'll just reset speed and revs to 0
+- add a click listener to a button and send command over the socket to server
