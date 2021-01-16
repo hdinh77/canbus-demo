@@ -1,6 +1,7 @@
 var can = require('socketcan');
 
 var channel = can.createRawChannel('vcan0', true);
+var channel2 = can.createRawChannel('vcan1', true);
 
 var msg = {
     'id': 500,
@@ -42,6 +43,7 @@ setInterval(() => {
     out.data = buff;
 
     channel.send(out);
+    channel2.send(out);
 
 }, 100)
 
@@ -49,4 +51,5 @@ setInterval(() => {
 
 
 
-channel.start()
+channel.start();
+channel2.start();

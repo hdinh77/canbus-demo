@@ -3,9 +3,8 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
-var path = require('path');
-
 var channel = can.createRawChannel('vcan0', true);
+var channel2 = can.createRawChannel('vcan1', true);
 
 var carInfo = {};
 carInfo.speed = 0;
@@ -15,9 +14,8 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/html');
 });
 
+
 app.use(express.static(__dirname + '/html'));
-app.use('/scripts', express.static(path.join(__dirname, '/node_modules/canvas-gauges/gauge.min.js')));
-app.use(express.static(__dirname + "/node_modules"));
 
 io.on('connection', function(client) {
     console.log('client is connected');
@@ -40,6 +38,15 @@ channel.addListener("onMessage", function(msg) {
     console.log(carInfo);
 });
 
+channel2.addListener("onMessage", function(msg) {
+    console.log("Message 2 has been received");
+    console.log("ID: " + msg.id);
+	carInfo.revs = msg.data.readUIntBE(0, 4);
+	carInfo.speed = msg.data.readUIntBE(4, 2);
+	console.log(carInfo);
+});
+
 channel.start();
+channel2.start();
 
 server.listen(3000);
