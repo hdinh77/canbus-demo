@@ -1,4 +1,4 @@
-var socket = io.connect('107.184.101.11:3000');    // this is IP address of device and the port number
+var socket = io.connect('localhost:3000');    // this is IP address of device and the port number
 
 document.addEventListener("DOMContentLoaded", onDOMReadyHandler());         // when DOM content loaded
 
