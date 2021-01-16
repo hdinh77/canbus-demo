@@ -1,7 +1,6 @@
 var can = require('socketcan');
 
 var channel = can.createRawChannel('vcan0', true);
-var channel2 = can.createRawChannel('vcan1', true);
 
 var msg = {
     'id': 500,
@@ -15,8 +14,7 @@ var up = true;
 setInterval(() => {
     var out = {};
     var buff = Buffer.alloc(8);
-    
-    
+        
     if(speed < 155) {
         speed += 1;
         revs += 240
@@ -36,20 +34,17 @@ setInterval(() => {
 
     buff.writeUIntBE(revs, 0, 4);
     buff.writeUIntBE(speed, 4, 2);
-    console.log(buff);
-
-
     out.id = msg.id;
     out.data = buff;
+    console.log(buff);
+    
+
+
+    var out1 = {};
+    var buff1 = Buffer.alloc(8);
 
     channel.send(out);
-    channel2.send(out);
-
 }, 100)
 
 
-
-
-
 channel.start();
-channel2.start();
