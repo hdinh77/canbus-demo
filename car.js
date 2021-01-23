@@ -9,6 +9,7 @@ var msg = {
 
 var speed = 0;
 var revs = 0;
+var actuator = 1;
 var up = true;
 
 setInterval(() => {
@@ -34,14 +35,10 @@ setInterval(() => {
 
     buff.writeUIntBE(revs, 0, 4);
     buff.writeUIntBE(speed, 4, 2);
+    buff.writeUIntBE(actuator, 6, 2);
     out.id = msg.id;
     out.data = buff;
-    console.log(buff);
-    
-
-
-    var out1 = {};
-    var buff1 = Buffer.alloc(8);
+    console.log(buff);     
 
     channel.send(out);
 }, 100)

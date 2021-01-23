@@ -20,9 +20,10 @@
             data-major-ticks="0,20,40,60,80,100,120,140,160,180,200,220"
             data-minor-ticks="2"
             data-stroke-ticks="false"
-            data-highlights='[
-                { "from": 0, "to": 220, "color": "rgba(0,0,255,.25)" }
-            ]'
+	    data-highlights='[
+	    	{ "from": 6000, "to":7000, "color": "rgba(0,0,255,0.25)" }
+	    ]'
+
             data-color-plate="#222"
             data-color-major-ticks="#f5f5f5"
             data-color-minor-ticks="#ddd"
@@ -36,7 +37,7 @@
             data-animation-duration="500"
             data-font-value="Led"
             data-animated-value="true"
-        ></canvas>
+	></canvas>
         <!-- Injecting radial gauge -->
         <canvas data-type="radial-gauge"
             data-width="400"
@@ -53,6 +54,7 @@
                 { "from": 6000, "to": 7000, "color": "rgba(255,255,0,.25)" },
                 { "from": 7000, "to": 8000, "color": "rgba(255,0,0,.25)" }
             ]'
+
             data-color-plate="#222"
             data-color-major-ticks="#f5f5f5"
             data-color-minor-ticks="#ddd"
@@ -66,23 +68,40 @@
             data-animation-duration="500"
             data-font-value="Led"
             data-animated-value="true"
-        ></canvas>
-        
+	></canvas>
+	
+	<br>
+	<button onclick="sendActuatorMessage()">This is a button to change the actuator</button>
+	<p>Actuator Value: <span id="actuatorValue">placeholder</span></p>
+
 	<script>
 		var socket = io();    // this is IP address of device and the port number
 
-		document.addEventListener("DOMContentLoaded", onDOMReadyHandler);         // when DOM content loaded
+		//document.addEventListener("DOMContentLoaded", onDOMReadyHandler);         // when DOM content loaded
 
-		function onDOMReadyHandler(event) {
-    			socket.on('CANmessage', (data) => {
+		//var curData
+			
+		//function onDOMReadyHandler(event) {
+		socket.on('CANmessage', (data) => {
          		var speed = document.getElementsByTagName('canvas')[0];
     			var revs = document.getElementsByTagName('canvas')[1];
+			document.getElementById('actuatorValue').innerHTML = data.actuator;
      			speed.setAttribute('data-value', data.speed);
        			revs.setAttribute('data-value', data.revs);
+		});
 
-        		console.log(data);
-   	 	});
-}
+		function sendActuatorMessage() {
+			console.log("got hereeeeeeee");
+			if(parseInt(document.getElementById('actuatorValue').innerHTML) == 0) {
+				socket.emit('actuatorChange', 1);
+				console.log("actuatorChange in html is 1");
+			}else {
+				socket.emit('actuatorChange', 0);
+				console.log("actuatorChange in html is 0");
+			}
+		}
+
 	</script>
+
     </body>
 </html>
